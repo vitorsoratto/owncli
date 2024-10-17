@@ -54,6 +54,7 @@ type model struct {
 	filePicker filepicker.Model
 	err        error
 	output     *Output
+	quit       bool
 }
 
 func InitialFilePicker(filePickerOptions *FilePickerOptions) model {
@@ -87,7 +88,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.Type {
 		case tea.KeyCtrlC, tea.KeyEsc:
-			m.err = errors.New("Quit")
+			m.quit = true
 			return m, tea.Quit
 		}
 
@@ -125,7 +126,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		if (m.output.SelectedCsvFile != "" && m.output.SelectedDBFile != "") {
-			m.err = errors.New("Quit")
+			m.quit = true
 			return m, tea.Quit
 		}
 	}
@@ -135,11 +136,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m model) View() string {
 	var s strings.Builder
 	s.WriteString("\n")
+	if (m.quit) {
+		return s.String();
+	}
 	if m.err != nil {
-		if m.err.Error() == "Quit" {
-			return ""
-		}
-
 		s.WriteString(m.filePicker.Styles.DisabledFile.Render(m.err.Error()))
 		s.WriteString("\n")
 	} else {

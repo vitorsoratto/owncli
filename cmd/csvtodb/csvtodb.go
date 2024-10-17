@@ -1,6 +1,10 @@
 package csvtodb
 
 import (
+	// "fmt"
+	// "os"
+
+	// "owncli/cmd/ui/csvtodb/filepicker"
 	"fmt"
 	"os"
 
@@ -54,6 +58,10 @@ var CsvtodbCmd = &cobra.Command{
 		csvPath := options.Output.SelectedCsvFile
 		dbPath := options.Output.SelectedDBFile
 
-		tea.NewProgram(reader.InitialReaderModel(csvPath, dbPath)).Run()
+		rp, err := tea.NewProgram(reader.InitialReaderModel(csvPath, dbPath)).Run()
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println(rp.View())
 	},
 }
