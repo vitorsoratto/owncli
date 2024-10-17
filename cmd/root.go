@@ -4,15 +4,13 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"owncli/cmd/csvtodb"
 )
-
-
 
 var rootCmd = &cobra.Command{
 	Use:   "owncli",
 	Short: "A cli created to solve my own problems",
-	Long: ".",
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Long:  "A cli created to solve my own problems",
 }
 
 func Execute() {
@@ -23,7 +21,5 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.AddCommand(csvtodb.CsvtodbCmd)
 }
-
-

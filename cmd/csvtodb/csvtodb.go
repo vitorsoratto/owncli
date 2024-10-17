@@ -1,10 +1,10 @@
-package cmd
+package csvtodb
 
 import (
-	"fmt"
 	"os"
 
-	"owncli/cmd/ui/filepicker"
+	"owncli/cmd/ui/csvtodb/filepicker"
+	"owncli/cmd/ui/csvtodb/reader"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -26,14 +26,11 @@ var (
 			Bold(true)
 )
 
-func init() {
-	rootCmd.AddCommand(createCmd)
-}
-
-var createCmd = &cobra.Command{
-	Use:   "csvtodb",
-	Short: "Uses a csv file and insert it into a selected database",
-	Long:  "Uses a csv file and insert it into a selected database",
+var CsvtodbCmd = &cobra.Command{
+	Use:                   "csvtodb",
+	DisableFlagsInUseLine: true,
+	Short:                 "Uses a csv file and insert it into a selected database",
+	Long:                  "Uses a csv file and insert it into a selected database",
 	Run: func(cmd *cobra.Command, args []string) {
 		var options filepicker.FilePickerOptions
 
@@ -43,7 +40,9 @@ var createCmd = &cobra.Command{
 
 		tea.NewProgram(filepicker.InitialFilePicker(&options)).Run()
 
-		fmt.Println()
-		fmt.Println(options.Output.SelectedCsvFile)
+		csvPath := options.Output.SelectedCsvFile
+		dbPath := options.Output.SelectedDBFile
+
+		tea.NewProgram(reader.InitialReaderModel(csvPath, dbPath)).Run()
 	},
 }

@@ -2,6 +2,7 @@ package filepicker
 
 import (
 	"errors"
+	"fmt"
 	"path/filepath"
 	"strings"
 	"time"
@@ -53,7 +54,6 @@ type model struct {
 	filePicker filepicker.Model
 	err        error
 	output     *Output
-	header     string
 }
 
 func InitialFilePicker(filePickerOptions *FilePickerOptions) model {
@@ -122,6 +122,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		} else if filepath.Ext(path) == ".db" && m.output.SelectedDBFile == "" {
 			m.output.SelectedDBFile = path
 		}
+
+		if (m.output.SelectedCsvFile != "" && m.output.SelectedDBFile != "") {
+			return m, tea.Quit
+		}
 	}
 	return m, cmd
 }
@@ -136,24 +140,21 @@ func (m model) View() string {
 		csvFile := m.output.SelectedCsvFile
 		dbFile := m.output.SelectedDBFile
 
-		if csvFile != "" {
-			s.WriteString(selectedStyle.Render("Selected csv file:"))
-			s.WriteString(fileStyle.Render(m.output.SelectedCsvFile))
-			s.WriteString("\n")
-		} else {
-			s.WriteString(selectStyle.Render("Select the csv file"))
-			s.WriteString("\n")
+		renderSelectedFile := func(file, label string) {
+			if file != "" {
+				s.WriteString(selectedStyle.Render(fmt.Sprintf("Selected %s:", label)))
+				s.WriteString(fileStyle.Render(file) + "\n")
+			} else {
+				s.WriteString(selectStyle.Render(fmt.Sprintf("Select the %s file", label)) + "\n")
+			}
 		}
+
+		renderSelectedFile(csvFile, "csv")
 
 		if csvFile != "" && dbFile == "" {
-			s.WriteString(selectStyle.Render("Select the database file"))
-			s.WriteString("\n")
-		}
-
-		if dbFile != "" {
-			s.WriteString(selectedStyle.Render("Selected db file:"))
-			s.WriteString(fileStyle.Render(m.output.SelectedDBFile))
-			s.WriteString("\n")
+			s.WriteString(selectStyle.Render("Select the database file") + "\n")
+		} else if dbFile != "" {
+			renderSelectedFile(dbFile, "db")
 		}
 	}
 	s.WriteString("\n" + m.filePicker.View())
