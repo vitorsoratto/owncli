@@ -1,6 +1,7 @@
 package csvtodb
 
 import (
+	"fmt"
 	"os"
 
 	"owncli/cmd/ui/csvtodb/filepicker"
@@ -34,11 +35,21 @@ var CsvtodbCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		var options filepicker.FilePickerOptions
 
-		options.AllowedTypes = []string{".db", ".csv"}
+		options.AllowedTypes = []string{".csv"}
 		options.CurrentDirectory, _ = os.UserHomeDir()
 		options.Output = &filepicker.Output{}
 
 		tea.NewProgram(filepicker.InitialFilePicker(&options)).Run()
+
+		if options.Output.SelectedCsvFile == "" {
+			fmt.Println("No csv file selected")
+			return
+		}
+
+		if options.Output.SelectedDBFile == "" {
+			fmt.Println("No database file selected")
+			return
+		}
 
 		csvPath := options.Output.SelectedCsvFile
 		dbPath := options.Output.SelectedDBFile
