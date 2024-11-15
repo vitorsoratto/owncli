@@ -1,10 +1,6 @@
 package csvtodb
 
 import (
-	// "fmt"
-	// "os"
-
-	// "owncli/cmd/ui/csvtodb/filepicker"
 	"fmt"
 	"os"
 

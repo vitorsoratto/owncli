@@ -3,8 +3,10 @@ package cmd
 import (
 	"os"
 
-	"github.com/spf13/cobra"
 	"owncli/cmd/csvtodb"
+	"owncli/cmd/fbadm"
+
+	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{
@@ -22,4 +24,5 @@ func Execute() {
 
 func init() {
 	rootCmd.AddCommand(csvtodb.CsvtodbCmd)
+	rootCmd.AddCommand(fbadm.FBAdmCmd)
 }
